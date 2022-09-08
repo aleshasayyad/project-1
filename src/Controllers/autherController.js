@@ -6,10 +6,14 @@ const blogModel = require("../Controllers/blogController")
 const createAuthor = async function (req, res) {
     try {
         let author = req.body
-        let Email = req.body.email
-        if(!validator.isEmail(Email)) return res.status(400).send({status:false,msg:" please Enter valid EmailId"})
-        let authorCreated = await AuthorModel.create(author)
-        res.status(201).send({ status: true, data: authorCreated })
+        let { fname, lname, email, password } = req.body
+        if (validator.isEmail(email)) {
+            let authorCreated = await AuthorModel.create(author)
+            res.status(201).send({ status: true, data: authorCreated })
+        } else {
+            return res.status(400).send({ status: false, msg: " please Enter valid EmailId" })
+        }
+
     }
     catch (error) {
         res.status(500).send({ status: false, msg: error.message })
@@ -18,9 +22,10 @@ const createAuthor = async function (req, res) {
 
 const loginAuther = async function (req, res) {
     try {
-        let autherdetail = req.body
-        if (Object.keys(autherdetail).length != 0) {
-            let Auther = await AuthorModel.findOne({ email: autherdetail.email, password: autherdetail.password });
+        let { email, password } = req.body
+        if (Object.keys(req.body).length != 0) {
+            if (!validator.isEmail(email)) return res.status(400).send({ status: false, msg: " please Enter valid EmailId" })
+            let Auther = await AuthorModel.findOne({ email: email, password: password });
             if (Auther) {
                 let token = jwt.sign(
                     {
@@ -39,7 +44,7 @@ const loginAuther = async function (req, res) {
                 });
             }
         } else {
-            res.status(400).send({ msg: "BAD REQUEST" })
+            return res.status(400).send({ msg: "Send the data Body" })
         }
     } catch (error) {
         res.status(500).send({ msg: "Error", error: error.message })

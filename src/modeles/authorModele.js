@@ -4,11 +4,17 @@ const authorSchema = new mongoose.Schema({
 
     fname: {
         type: String,
-        required: true
+        required: true,
+        trim: true,
+        minlength:[2, "minimum 2letters"],
+        maxlength:30
     },
     lname: {
         type: String,
-        required: true
+        required: true,
+        trim: true,
+        minlength:[2, "minimum 2letters"],
+        maxlength:30
     },
     title: {
         type: String,
@@ -23,6 +29,9 @@ const authorSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
+        minlength:6,
+        maxlength:15,
+        trim:true
     },
 
 }, { timestamps: true })
