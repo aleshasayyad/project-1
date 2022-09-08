@@ -1,12 +1,22 @@
 const jwt = require("jsonwebtoken");
 const validator = require('validator')
 const AuthorModel = require("../modeles/authorModele.js")
-const blogModel = require("../Controllers/blogController")
+
+// ======================================== Create Auther ===================================
 
 const createAuthor = async function (req, res) {
     try {
         let author = req.body
-        let { fname, lname, email, password } = req.body
+
+        let { fname, lname, email } = req.body
+
+        const validName = function (value) {
+            return (/^(?![\. ])[a-zA-Z\. ]+(?<! )$/.test(value))
+        }
+
+        if (!validName(fname)) return res.status(400).send({ status: false, data: "fname Should be String" })
+        if (!validName(lname)) return res.status(400).send({ status: false, data: "lname Should be String" })
+
         if (validator.isEmail(email)) {
             let authorCreated = await AuthorModel.create(author)
             res.status(201).send({ status: true, data: authorCreated })
@@ -19,6 +29,8 @@ const createAuthor = async function (req, res) {
         res.status(500).send({ status: false, msg: error.message })
     }
 }
+
+// ================================= Login Auther =====================================
 
 const loginAuther = async function (req, res) {
     try {
@@ -44,7 +56,7 @@ const loginAuther = async function (req, res) {
                 });
             }
         } else {
-            return res.status(400).send({ msg: "Send the data Body" })
+            return res.status(400).send({ msg: "Please Enter Email And password" })
         }
     } catch (error) {
         res.status(500).send({ msg: "Error", error: error.message })

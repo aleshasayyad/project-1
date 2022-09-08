@@ -2,6 +2,9 @@ const jwt = require("jsonwebtoken");
 const mongoose = require('mongoose');
 const blogModel = require("../modeles/blogModel");
 
+// ============================================>> Authentication <<===================================================
+
+
 const tokenverify = function (req, res, next) {
     try {
         let token = req.headers["x-api-key"]
@@ -19,6 +22,8 @@ const tokenverify = function (req, res, next) {
 
 };
 
+// ============================================>> Authorisation <<===================================================
+
 const auth = async function (req, res, next) {
     try {
         let tokenAutherId = req.AutherId
@@ -28,7 +33,8 @@ const auth = async function (req, res, next) {
         if (!checkValidBolgId) return res.status(400).send({ status: false, msg: "ObjectId Not valid" })
 
         let findauther = await blogModel.findById(blogid).select({ authorId: 1, _id: 0 })
-        if(Object.keys(findauther).length == 0) return res.status(404).send({status:false, msg: "Blog not find"})
+
+        if (Object.keys(findauther).length == 0) return res.status(404).send({ status: false, msg: "Blog not found" })
         let Auther = findauther.authorId
 
         if (tokenAutherId == Auther) {
@@ -41,6 +47,8 @@ const auth = async function (req, res, next) {
         res.status(500).send({ status: false, error: error.message })
     }
 }
+
+// ============================================>> Authorisation <<============================================
 
 const auth2 = async function (req, res, next) {
     try {
@@ -55,15 +63,18 @@ const auth2 = async function (req, res, next) {
                 { category: category },
                 { tags: { $in: [tags] } },
                 { subcategory: { $in: [subcategory] } }, { isPublished: unpublished }]
-                ,isDeleted:false}).select({ authorId: 1, _id: 0 })
+                , isDeleted: false
+            }).select({ authorId: 1, _id: 0 })
 
-     if (findauther2.length == 0) return res.status(404).send({ status: false, msg: "Blog not found or Already Deleted" })  
+        if (findauther2.length == 0) return res.status(404).send({ status: false, msg: "Blog Already Deleted" })
+
         for (let i = 0; i < findauther2.length; i++) {
             const auther = findauther2[i];
-            if(tokenAutherId == auther.authorId){
+
+            if (tokenAutherId == auther.authorId) {
                 req.AutherId = auther
                 next()
-            }else{
+            } else {
                 return res.status(403).send({ status: false, msg: "Sorry You are not authorised" })
             }
         }

@@ -18,4 +18,5 @@ router.delete("/blogs", tokenverify, auth2, blogcontroller.deleteBloggByQuery)
 
 router.post("/login", autherController.loginAuther)
 
+
 module.exports = router;
