@@ -25,9 +25,7 @@ const createAuthor = async function (req, res) {
         if (!validName(lname)) return res.status(400).send({ status: false, data: "lname Should be String" })
 
         let validPassword = function (pass) {
-            return (/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&])[a-zA-Z0-9@#$%&]{6,20}$/   //"Password should be min 6 and max 20 character.It contains atleast--> 1 Uppercase letter, 1 Lowercase letter, 1 Number, 1 Special character"
-
-            .test(pass))
+            return (/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&])[a-zA-Z0-9@#$%&]{6,20}$/.test(pass))
         }
         if (!validPassword(password)){
             
