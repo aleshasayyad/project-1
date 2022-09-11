@@ -25,10 +25,15 @@ const createAuthor = async function (req, res) {
         if (!validName(lname)) return res.status(400).send({ status: false, data: "lname Should be String" })
 
         let validPassword = function (pass) {
-            return (/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(pass))
+            return (/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&])[a-zA-Z0-9@#$%&]{6,20}$/   //"Password should be min 6 and max 20 character.It contains atleast--> 1 Uppercase letter, 1 Lowercase letter, 1 Number, 1 Special character"
+
+            .test(pass))
         }
         if (!validPassword(password)){
-            return res.status(400).send({ status: false, data: "pass : Minimum eight characters, at least one letter and one number " })
+            
+            return res.status(400).send({ status: false, data: " Password should be min 6 and max 20 character.It contains atleast--> 1 Uppercase letter, 1 Lowercase letter, 1 Number, 1 Special character"})
+        
+            
         }
 
         if (validator.isEmail(email)) {

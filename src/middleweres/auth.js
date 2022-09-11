@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const mongoose = require('mongoose');
 const blogModel = require("../modeles/blogModel");
 
-// ============================================>> Authentication <<===================================================
+// ============================================>> Authentication use for identifying user to access a system<<===================================================
 
 
 const tokenverify = function (req, res, next) {
@@ -22,7 +22,7 @@ const tokenverify = function (req, res, next) {
 
 };
 
-// ============================================>> Authorisation <<===================================================
+// ============================================>> Authorisation  giving permission to access the resources<<===================================================
 
 const auth = async function (req, res, next) {
     try {
