@@ -15,7 +15,7 @@ const createAuthor = async function (req, res) {
         }
 
         if (title !== "Mr" && title !== "Mrs" && title !== "Miss") {
-            return res.status(400).send({ status: false, data: "Please Send The Valid title" })
+            return res.status(400).send({ status: false, data: "Please Send The Valid title like:- Mr, Mrs, Miss" })
         }
         const validName = function (value) {
             return (/^(?![\. ])[a-zA-Z\. ]+(?<! )$/.test(value))

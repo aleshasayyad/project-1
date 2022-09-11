@@ -6,9 +6,7 @@ const autherModel = require("../modeles/authorModele")
 const createBlogs = async function (req, res) {
     try {
         const blog = req.body
-        let { title, body, authorId, tags, category, subcategory, ...rest } = blog
-
-        //-------------------- check mendatory field-------------------------------------//
+        let { title, body, authorId, tags, category, subcategory } = blog
 
         if (!title) return res.status(400).send({ status: false, data: " please enter title" })
         if (!body) return res.status(400).send({ starus: false, data: "please enter body" })
@@ -18,9 +16,9 @@ const createBlogs = async function (req, res) {
             return res.status(400).send({ status: false, msg: "please enter valid author id " })
         }
 
-        let checkAuther = await autherModel.findById(authId)
+        let checkAuther = await autherModel.findById(authorId)
         if (checkAuther) {
-            let createdBlogs = await blogModel.create(blogs)
+            let createdBlogs = await blogModel.create(blog)
             res.status(201).send({ status: true, data: createdBlogs })
         } else {
             res.status(401).send({ status: true, msg: " Auther is not valid" })
