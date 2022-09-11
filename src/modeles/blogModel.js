@@ -4,15 +4,12 @@ const blogSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
-        trim:true,
-        mimlenght: [2, "minimum 2Letters"]
+        trim:true
     },
     body: {
         type: String,
         required: true,
-        trim:true,
-        mimlenght: [2, "minimum 2Letters"]
-
+        trim:true
     },
     authorId: {
         type: ObjectId,
@@ -23,9 +20,7 @@ const blogSchema = new mongoose.Schema({
     category: {
         type: String,
         required: true,
-        trim:true,
-        mimlenght: [2, "minimum 2Letters"]
-
+        trim:true
     },
     subcategory: [] ,
     isDeleted: {

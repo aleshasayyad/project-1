@@ -6,15 +6,11 @@ const authorSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        minlength:[2, "minimum 2letters"],
-        maxlength:30
     },
     lname: {
         type: String,
         required: true,
         trim: true,
-        minlength:[2, "minimum 2letters"],
-        maxlength:30
     },
     title: {
         type: String,
