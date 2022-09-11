@@ -5,8 +5,19 @@ const autherModel = require("../modeles/authorModele")
 
 const createBlogs = async function (req, res) {
     try {
-        let blogs = req.body
-        let authId = req.body.authorId
+        const blog = req.body
+        let { title, body, authorId, tags, category, subcategory, ...rest } = blog
+
+        //-------------------- check mendatory field-------------------------------------//
+
+        if (!title) return res.status(400).send({ status: false, data: " please enter title" })
+        if (!body) return res.status(400).send({ starus: false, data: "please enter body" })
+        if (!authorId) return res.status(400).send({ status: false, data: "please enter authorId" })
+        if (!category) return res.status(400).send({ status: false, data: "please enter category" })
+        if (!mongoose.Types.ObjectId.isValid(authorId)) {
+            return res.status(400).send({ status: false, msg: "please enter valid author id " })
+        }
+
         let checkAuther = await autherModel.findById(authId)
         if (checkAuther) {
             let createdBlogs = await blogModel.create(blogs)
@@ -32,7 +43,7 @@ const getBologs = async function (req, res) {
                 { category: category },
                 { tags: { $in: [tags] } },
                 { subcategory: { $in: [subcategory] } }],
-                 isDeleted: false, isPublished: true,
+                isDeleted: false, isPublished: true,
             })
         if (getBolog.length != 0) {
             res.status(200).send({ status: true, data: getBolog })
@@ -49,10 +60,10 @@ const getBologs = async function (req, res) {
 
 const updateBlogs = async function (req, res) {
     try {
-        let data = req.body
+        let = req.body
         if (!Object.keys(data).length != 0) return res.status(400).send({ status: false, msg: "Please Give Any Data in Body" })
         let blogId = req.params.blogId
-        let { title, body, tags, subcategory, isPublished } = req.body
+        let { title, body, tags, subcategory, isPublished } = data
 
         if (blogId) {
             let check1 = await blogModel.findOne({ _id: blogId, isDeleted: false })
@@ -60,15 +71,15 @@ const updateBlogs = async function (req, res) {
                 let updateBlogs = await blogModel.findByIdAndUpdate(
                     blogId,
                     {
-                        $set: { body: body, title: title, isPublished: isPublished, publishedAt: new Date},
+                        $set: { body: body, title: title, isPublished: isPublished, publishedAt: new Date },
                         $push: { tags: tags, subcategory: subcategory }
-                    },{new:true})
+                    }, { new: true })
                 return res.status(200).send({ status: true, data: updateBlogs })
             } else {
                 return res.status(404).send({ status: false, msg: "Data Not found" })
             }
         } else {
-          return  res.status(400).send({ status: false, msg: "Give Blog Id in Path params" })
+            return res.status(400).send({ status: false, msg: "Give Blog Id in Path params" })
         }
     } catch (error) {
         res.status(500).send({ msg: "Error", error: error.message })
@@ -88,13 +99,13 @@ const deleteblog = async function (req, res) {
                 let deletedblog = await blogModel.updateMany({ check1 }, { $set: { isDeleted: true, deletedAt: new Date } })
                 res.status(200).send()
             } else {
-              return  res.status(404).send({ status: false, msg: "Blog Already Deleted" })
+                return res.status(404).send({ status: false, msg: "Blog Already Deleted" })
             }
         } else {
-          return  res.status(400).send({ status: false, msg: "please give BlogId in path params" })
+            return res.status(400).send({ status: false, msg: "please give BlogId in path params" })
         }
     } catch (error) {
-      return  res.status(500).send({ msg: "Error", error: error.message })
+        return res.status(500).send({ msg: "Error", error: error.message })
     }
 }
 
@@ -109,13 +120,6 @@ const deleteBloggByQuery = async function (req, res) {
     } catch (error) {
         res.status(500).send({ msg: "Error", error: error.message })
     }
-
-
 }
 
-
-module.exports.createBlogs = createBlogs
-module.exports.getBologs = getBologs
-module.exports.updateBlogs = updateBlogs
-module.exports.deleteblog = deleteblog
-module.exports.deleteBloggByQuery = deleteBloggByQuery
+module.exports = { createBlogs, getBologs, updateBlogs, deleteblog, deleteBloggByQuery } 

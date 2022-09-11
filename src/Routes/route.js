@@ -6,17 +6,17 @@ const{tokenverify, auth, auth2} =require("../middleweres/auth")
 
 router.post("/authors",autherController.createAuthor)
 
+router.post("/login", autherController.loginAuther)
+
 router.post("/blogs",tokenverify,blogcontroller.createBlogs)
 
-router.get("/blogs",tokenverify,blogcontroller.getBologs)
+router.get("/blogs", tokenverify, blogcontroller.getBologs)
 
-router.put("/blogs/:blogId",tokenverify, auth, blogcontroller.updateBlogs)
+router.put("/blogs/:blogId", tokenverify, auth, blogcontroller.updateBlogs)
 
 router.delete("/blogs/:blogId",tokenverify, auth, blogcontroller.deleteblog)
 
 router.delete("/blogs", tokenverify, auth2, blogcontroller.deleteBloggByQuery)
-
-router.post("/login", autherController.loginAuther)
 
 
 module.exports = router;

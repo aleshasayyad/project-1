@@ -8,14 +8,28 @@ const createAuthor = async function (req, res) {
     try {
         let author = req.body
 
-        let { fname, lname, email } = req.body
+        let { fname, lname, email, password, title } = author
 
+        if (!(fname && lname && email && password && title)) {
+            return res.status(400).send({ status: false, msg: "Provide All data in Body" })
+        }
+
+        if (title !== "Mr" && title !== "Mrs" && title !== "Miss") {
+            return res.status(400).send({ status: false, data: "Please Send The Valid title" })
+        }
         const validName = function (value) {
             return (/^(?![\. ])[a-zA-Z\. ]+(?<! )$/.test(value))
         }
 
         if (!validName(fname)) return res.status(400).send({ status: false, data: "fname Should be String" })
         if (!validName(lname)) return res.status(400).send({ status: false, data: "lname Should be String" })
+
+        let validPassword = function (pass) {
+            return (/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(pass))
+        }
+        if (!validPassword(password)){
+            return res.status(400).send({ status: false, data: "pass : Minimum eight characters, at least one letter and one number " })
+        }
 
         if (validator.isEmail(email)) {
             let authorCreated = await AuthorModel.create(author)
@@ -63,6 +77,4 @@ const loginAuther = async function (req, res) {
     }
 }
 
-
-module.exports.createAuthor = createAuthor
-module.exports.loginAuther = loginAuther
+module.exports = {createAuthor, loginAuther} 
