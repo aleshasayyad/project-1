@@ -1,6 +1,6 @@
 const blogModel = require("../modeles/blogModel")
 const autherModel = require("../modeles/authorModele")
-const mongoose =require("mongoose")
+const mongoose = require("mongoose")
 
 // ======================================>> create Blogs <<========================================//
 
@@ -34,7 +34,7 @@ const createBlogs = async function (req, res) {
 const getBologs = async function (req, res) {
     try {
         let data = req.query
-        if (!Object.keys(data).length != 0) return res.status(400).send({ status: false, msg: "Please Give Any Filter" })
+
         let { authorId, category, tags, subcategory } = req.query
         let getBolog = await blogModel.find(
             {
@@ -59,27 +59,19 @@ const getBologs = async function (req, res) {
 
 const updateBlogs = async function (req, res) {
     try {
-        let = req.body
+        let data = req.body
         if (!Object.keys(data).length != 0) return res.status(400).send({ status: false, msg: "Please Give Any Data in Body" })
-        let blogId = req.params.blogId
+        let blog = req.blog._id
         let { title, body, tags, subcategory, isPublished } = data
 
-        if (blogId) {
-            let check1 = await blogModel.findOne({ _id: blogId, isDeleted: false })
-            if (check1) {
-                let updateBlogs = await blogModel.findByIdAndUpdate(
-                    blogId,
-                    {
-                        $set: { body: body, title: title, isPublished: isPublished, publishedAt: new Date },
-                        $push: { tags: tags, subcategory: subcategory }
-                    }, { new: true })
-                return res.status(200).send({ status: true, data: updateBlogs })
-            } else {
-                return res.status(404).send({ status: false, msg: "Data Not found" })
-            }
-        } else {
-            return res.status(400).send({ status: false, msg: "Give Blog Id in Path params" })
-        }
+        let updateBlogs = await blogModel.findByIdAndUpdate(
+            blog,
+            {
+                $set: { body: body, title: title, isPublished: isPublished, publishedAt: new Date },
+                $push: { tags: tags, subcategory: subcategory }
+            }, { new: true })
+        return res.status(200).send({ status: true, data: updateBlogs })
+
     } catch (error) {
         res.status(500).send({ msg: "Error", error: error.message })
     }
@@ -91,18 +83,10 @@ const updateBlogs = async function (req, res) {
 
 const deleteblog = async function (req, res) {
     try {
-        let blogId = req.blogId
-        if (blogId) {
-            let check1 = await blogModel.find({ _id: blogId, isDeleted: false })
-            if (check1.lenght != 0) {
-                let deletedblog = await blogModel.updateMany({ check1 }, { $set: { isDeleted: true, deletedAt: new Date } })
-                res.status(200).send()
-            } else {
-                return res.status(404).send({ status: false, msg: "Blog Already Deleted" })
-            }
-        } else {
-            return res.status(400).send({ status: false, msg: "please give BlogId in path params" })
-        }
+        let blogId = req.blog._id
+        let deletedblog = await blogModel.findByIdAndUpdate(blogId, { $set: { isDeleted: true, deletedAt: new Date } })
+        res.status(200).send({ status: true })
+
     } catch (error) {
         return res.status(500).send({ msg: "Error", error: error.message })
     }
@@ -114,8 +98,8 @@ const deleteblog = async function (req, res) {
 const deleteBloggByQuery = async function (req, res) {
     try {
         let AutherId = req.AutherId
-        let deleteblog = await blogModel.updateMany(AutherId, { $set: { isDeleted: true, deletedAt: new Date } })
-        res.status(200).send()
+        let deleteblog = await blogModel.findByIdAndUpdate(AutherId, { $set: { isDeleted: true, deletedAt: new Date } })
+        res.status(200).send({ status: true })
     } catch (error) {
         res.status(500).send({ msg: "Error", error: error.message })
     }

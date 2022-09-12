@@ -30,15 +30,15 @@ const auth = async function (req, res, next) {
         let blogid = req.params.blogId
 
         let checkValidBolgId = mongoose.Types.ObjectId.isValid(blogid)
-        if (!checkValidBolgId) return res.status(400).send({ status: false, msg: "ObjectId Not valid" })
+        if (!checkValidBolgId) return res.status(400).send({ status: false, msg: "BlogId Not valid" })
 
-        let findauther = await blogModel.findById(blogid).select({ authorId: 1, _id: 0 })
+        let findauther = await blogModel.findOne({ _id: blogid, isDeleted: false })
 
-        if (Object.keys(findauther).length == 0) return res.status(404).send({ status: false, msg: "Blog not found" })
+        if (!findauther) return res.status(404).send({ status: false, msg: "This Blog is Already Deleted You Can Not Modify" })
         let Auther = findauther.authorId
 
         if (tokenAutherId == Auther) {
-            req.blogId = blogid
+            req.blog = findauther
             next();
         } else {
             return res.status(403).send({ status: false, msg: "Sorry You are not authorised" })
@@ -55,7 +55,7 @@ const auth2 = async function (req, res, next) {
         let tokenAutherId = req.AutherId
         let data = req.query
         if (Object.keys(data).length == 0) return res.status(400).send({ status: false, msg: "Please Give Any Filter" })
-        let { AutherId, category, tags, subcategory, unpublished } = req.query
+        let { AutherId, category, tags, subcategory, unpublished } = data
 
         let findauther2 = await blogModel.find(
             {

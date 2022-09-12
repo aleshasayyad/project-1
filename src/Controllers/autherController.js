@@ -11,7 +11,7 @@ const createAuthor = async function (req, res) {
         let { fname, lname, email, password, title } = author
 
         if (!(fname && lname && email && password && title)) {
-            return res.status(400).send({ status: false, msg: "Provide All data in Body" })
+            return res.status(400).send({ status: false, msg: "Somthing missing in your body plz check all Field like- fname, lname, email etc" })
         }
 
         if (title !== "Mr" && title !== "Mrs" && title !== "Miss") {
@@ -21,8 +21,8 @@ const createAuthor = async function (req, res) {
             return (/^(?![\. ])[a-zA-Z\. ]+(?<! )$/.test(value))
         }
 
-        if (!validName(fname)) return res.status(400).send({ status: false, data: "fname Should be String" })
-        if (!validName(lname)) return res.status(400).send({ status: false, data: "lname Should be String" })
+        if (!validName(fname)) return res.status(400).send({ status: false, data: "fname Should be Alphabets" })
+        if (!validName(lname)) return res.status(400).send({ status: false, data: "lname Should be Alphapets" })
 
         let validPassword = function (pass) {
             return (/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&])[a-zA-Z0-9@#$%&]{6,20}$/.test(pass))
